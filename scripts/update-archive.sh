@@ -35,26 +35,26 @@ fi
 DEBIANEXCLUDES="$( cat "${DEBIANEXCLUDESFILE}" | awk '{print $1}' | xargs ) ${CURRENTINCOMINGPKGS}"
 printf '%s purge\n' $( echo "${DEBIANEXCLUDES}" | xargs -n 1 | sort -u | xargs ) > "${DEBIANEXCLUDESFILE}"
 
-echo "Processing incoming folder ..." >> "${UPDATESLOGFILE}"
+echo "Processing incoming folder ..." 1>>"${UPDATESLOGFILE}" 2>&1
 reprepro -VVV --basedir ${BASE} --logdir ${LOGDIR} --noskipold --waitforlock 20 processincoming incoming 1>>"${UPDATESLOGFILE}" 2>&1
 rm -rf ${BASE}/conf/incoming-dir/*
 
 for DIST in ${DISTS}; do
   CONTINUE="TRUE"
-  echo "Start processing of distribution: ${DIST} " >> "${UPDATESLOGFILE}"
+  echo "Start processing of distribution: ${DIST} " 1>>"${UPDATESLOGFILE}" 2>&1
   if [ -d "${BASE}/dists/${DIST}" ]; then
     while [ "${CONTINUE}" == "TRUE" ]; do
       if reprepro -VVV --basedir ${BASE} --logdir ${LOGDIR} --noskipold --waitforlock 20 update ${DIST} 1>>"${UPDATESLOGFILE}" 2>&1; then
-        echo "Update completed for distribution: ${DIST}" >> "${UPDATESLOGFILE}"
+        echo "Update completed for distribution: ${DIST}" 1>>"${UPDATESLOGFILE}" 2>&1
         CONTINUE="FALSE"
       else
         BADCHECKSUMPKG="$( cat "${UPDATESLOGFILE}" | grep "${ERRORKEY}" | awk -F'"' '{print $2}' | awk -F'/' '{print $4}' )"
-        echo "There was an error processing distribution: ${DIST}" >> "${UPDATESLOGFILE}"
+        echo "There was an error processing distribution: ${DIST}" 1>>"${UPDATESLOGFILE}" 2>&1
 
         if [ -n "${BADCHECKSUMPKG}" ]; then
-          echo "This package ${ERRORKEY}: ${BADCHECKSUMPKG}" >> "${UPDATESLOGFILE}"
+          echo "This package ${ERRORKEY}: ${BADCHECKSUMPKG}" 1>>"${UPDATESLOGFILE}" 2>&1
           for DISTRO in ${DISTS}; do
-            echo "Removing package: ${BADCHECKSUMPKG}, from distribution: ${DISTRO}" >> "${UPDATESLOGFILE}"
+            echo "Removing package: ${BADCHECKSUMPKG}, from distribution: ${DISTRO}" 1>>"${UPDATESLOGFILE}" 2>&1
             reprepro -VVV --basedir ${BASE} --logdir ${LOGDIR} --noskipold --waitforlock 20 removesrc ${DISTRO} ${BADCHECKSUMPKG} 1>>"${UPDATESLOGFILE}" 2>&1
             reprepro -VVV --basedir ${BASE} --logdir ${LOGDIR} --noskipold --waitforlock 20 remove ${DISTRO} ${BADCHECKSUMPKG} 1>>"${UPDATESLOGFILE}" 2>&1
           done
@@ -64,33 +64,33 @@ for DIST in ${DISTS}; do
       fi
     done
   fi
-  echo "Creating symlinks ..." >> "${UPDATESLOGFILE}"
+  echo "Creating symlinks ..." 1>>"${UPDATESLOGFILE}" 2>&1
   reprepro -VVV --basedir ${BASE} --logdir ${LOGDIR} --noskipold --waitforlock 20 --delete createsymlinks ${DIST} 1>>"${UPDATESLOGFILE}" 2>&1
-  echo "Exporting changes ..." >> "${UPDATESLOGFILE}"
+  echo "Exporting changes ..." 1>>"${UPDATESLOGFILE}" 2>&1
   reprepro -VVV --basedir ${BASE} --logdir ${LOGDIR} --noskipold --waitforlock 20 export ${DIST} 1>>"${UPDATESLOGFILE}" 2>&1
 done
 
 
-echo "Copying translations ..." >> "${UPDATESLOGFILE}"
+echo "Copying translations ..." 1>>"${UPDATESLOGFILE}" 2>&1
 for DIST in ${DISTS}; do
   for COMPONENT in ${COMPONENTS}; do
-    echo "Removing ${BASE}/${DIST}/${COMPONENT}/i18n" >> "${UPDATESLOGFILE}"
-    rm -rvf "${BASE}/${DIST}/${COMPONENT}/i18n" >> "${UPDATESLOGFILE}"
-    echo "Getting i18n folder from ${MIRROR}/debian/dists/sid/${COMPONENT}/i18n/" >> "${UPDATESLOGFILE}"
+    echo "Removing ${BASE}/${DIST}/${COMPONENT}/i18n" 1>>"${UPDATESLOGFILE}" 2>&1
+    rm -rvf "${BASE}/${DIST}/${COMPONENT}/i18n" 1>>"${UPDATESLOGFILE}" 2>&1
+    echo "Getting i18n folder from ${MIRROR}/debian/dists/sid/${COMPONENT}/i18n/" 1>>"${UPDATESLOGFILE}" 2>&1
     umask o+r,u+rw,g+rw
-    wget -P${BASE}/dists/${DIST}/${COMPONENT} -nH --cut-dirs=4 -r --reject "index.html*" --no-parent ${MIRROR}/debian/dists/sid/${COMPONENT}/i18n/  >> "${UPDATESLOGFILE}"
+    wget -P${BASE}/dists/${DIST}/${COMPONENT} -nH --cut-dirs=4 -r --reject "index.html*" --no-parent ${MIRROR}/debian/dists/sid/${COMPONENT}/i18n/ 1>>"${UPDATESLOGFILE}" 2>&1
   done
 done
 
-echo "Copying debian installer ..." >> "${UPDATESLOGFILE}"
+echo "Copying debian installer ..." 1>>"${UPDATESLOGFILE}" 2>&1
 for DIST in ${DISTS}; do
   ARCHS="$( ls -1 "${BASE}/dists/${DIST}/main/" | grep "binary-" | sed 's/binary-//g' )"
   for ARCH in ${ARCHS}; do
-    echo "Removing ${BASE}/dists/${DIST}/main/installer-${ARCH}" >> "${UPDATESLOGFILE}"
-    rm -rvf "${BASE}/dists/${DIST}/main/installer-${ARCH}" >> "${UPDATESLOGFILE}"
-    echo "Getting installer-${ARCH} folder from ${MIRROR}/debian/dists/sid/main/installer-${ARCH}" >> "${UPDATESLOGFILE}"
+    echo "Removing ${BASE}/dists/${DIST}/main/installer-${ARCH}" 1>>"${UPDATESLOGFILE}" 2>&1
+    rm -rvf "${BASE}/dists/${DIST}/main/installer-${ARCH}" 1>>"${UPDATESLOGFILE}" 2>&1
+    echo "Getting installer-${ARCH} folder from ${MIRROR}/debian/dists/sid/main/installer-${ARCH}" 1>>"${UPDATESLOGFILE}" 2>&1
     umask o+r,u+rw,g+rw
-    wget -P${BASE}/dists/${DIST}/main -nH --cut-dirs=4 -r --reject "index.html*" --no-parent ${MIRROR}/debian/dists/sid/main/installer-${ARCH}/  >> "${UPDATESLOGFILE}"
+    wget -P${BASE}/dists/${DIST}/main -nH --cut-dirs=4 -r --reject "index.html*" --no-parent ${MIRROR}/debian/dists/sid/main/installer-${ARCH}/ 1>>"${UPDATESLOGFILE}" 2>&1
     find ${BASE}/dists/${DIST}/main/installer-${ARCH}/ -mindepth 1 ! -regex "^${BASE}/dists/${DIST}/main/installer-${ARCH}/current\(/.*\)?" -delete
   done
 done
