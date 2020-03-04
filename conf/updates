@@ -1,0 +1,8 @@
+Name: debian-sid
+Method: http://http.us.debian.org/debian
+Suite: sid
+Architectures: source amd64
+Components: main>main contrib>contrib non-free>non-free
+UDebComponents: main>main contrib>contrib non-free>non-free
+FilterList: install excludes/debian
+VerifyRelease: blindtrust

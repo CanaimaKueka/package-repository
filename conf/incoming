@@ -1,0 +1,4 @@
+Name: incoming
+IncomingDir: conf/incoming-dir
+TempDir: conf/temp-dir
+Default: palirawaa
