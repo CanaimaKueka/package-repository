@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -ex
-
 BASE="$(dirname $(dirname $(realpath ${0})))"
 LOCKEXISTS="TRUE"
 
@@ -27,8 +25,6 @@ TIME="$( date +%H%M%S )"
 DISTS="$( cat "${DISTFILE}" | grep "Codename:" | awk -F':' '{print $2}' | xargs )"
 UPDATES="$( cat "${UPDATESFILE}" | grep "Name:" | awk '{print $2}' )"
 COMPONENTS="$( cat "${UPDATESFILE}" | grep "^Components:" | grep "contrib" | awk -F':' '{print $2}' | head -1 | sed 's/>/ /g' | xargs -n 1 | sort -u | xargs )"
-
-exit 0
 
 if [ -z "$( ls -1 ${BASE}/conf/incoming-dir )" ]; then
   CURRENTINCOMINGPKGS=""

@@ -6,7 +6,7 @@ Version: 0
 Description: Canaima Kueka es un sabor de la Metadistribución Canaima GNU/Linux, orientado a desarrolladores de software que necesiten estar al día con las últimas versiones de sus aplicaciones favoritas.
 Architectures: source amd64
 Components: main contrib non-free
-UDebComponents main contrib non-free
+UDebComponents: main contrib non-free
 Update: - debian-sid
 DebIndices: Packages Release . .xz
 UDebIndices: Packages . .xz
@@ -23,7 +23,7 @@ Version: 1.0
 Description: Canaima Kueka es un sabor de la Metadistribución Canaima GNU/Linux, orientado a desarrolladores de software que necesiten estar al día con las últimas versiones de sus aplicaciones favoritas.
 Architectures: source amd64
 Components: main contrib non-free
-UDebComponents main contrib non-free
+UDebComponents: main contrib non-free
 Pull: from-tarimansen
 Update: - debian-sid
 DebIndices: Packages Release . .xz
